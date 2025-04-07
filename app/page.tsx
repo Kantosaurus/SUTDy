@@ -82,8 +82,14 @@ export default function Home() {
       if (loginForm.username === 'Kantosaurus' && loginForm.password === 'Kantosaurus9495') {
         console.log('Login successful');
         try {
-          // Close the login modal first
-          handleCloseModal(setShowLogin, setIsLoginExiting);
+          // Reset all modal states before navigation
+          setShowLogin(false);
+          setShowForgotPassword(false);
+          setShowCreateAccount(false);
+          setIsLoginExiting(false);
+          setIsForgotPasswordExiting(false);
+          setIsCreateAccountExiting(false);
+          
           await router.push(`/welcome?username=${encodeURIComponent(loginForm.username)}&firstLogin=false`);
           // Add fallback navigation
           if (typeof window !== 'undefined') {
@@ -246,7 +252,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-4 top-[13px] text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     {showPassword ? (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

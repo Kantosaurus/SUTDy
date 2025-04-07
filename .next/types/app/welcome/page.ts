@@ -1,4 +1,4 @@
-// File: C:\Users\wooai\OneDrive\Documents\GitHub\SUTDy\app\welcome\page.tsx
+// File: C:\Users\wooai\SUTDy\app\welcome\page.tsx
 import * as entry from '../../../../app/welcome/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

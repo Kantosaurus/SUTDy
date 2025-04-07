@@ -8,6 +8,7 @@ import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 import EventModal from '../components/EventModal';
 import CalendarGrid from '../components/CalendarGrid';
 import { Calendar, CalendarEvent, MONTHS } from '../types/calendar';
+import TaskList from '../components/TaskList';
 
 const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -33,7 +34,7 @@ export default function WelcomePage() {
 
   useEffect(() => {
     if (!username) {
-      router.push('/login');
+      router.push('/');
       return;
     }
 
@@ -507,97 +508,122 @@ export default function WelcomePage() {
                           transition={{ duration: 0.2 }}
                           className="w-full self-start overflow-y-auto max-h-[calc(100vh-12rem)] scrollbar-hide"
                         >
-                          {selectedDate && (
-                            <motion.div
-                              key={selectedDate.toISOString()}
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: 20 }}
-                              transition={{ duration: 0.2 }}
-                              className="w-full"
-                            >
-                              <div className="flex items-center justify-between mb-6">
-                                <div className="flex flex-col">
-                                  <h3 className="text-sm font-medium text-gray-900">
-                                    {selectedDate.toLocaleDateString('en-US', {
-                                      weekday: 'short',
-                                      month: 'short',
-                                      day: 'numeric'
-                                    })}
-                                  </h3>
+                          <motion.div
+                            key={selectedDate?.toISOString() || 'no-date'}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.2 }}
+                            className="w-full"
+                          >
+                            <div className="flex items-center justify-between mb-6">
+                              <div className="flex flex-col">
+                                <h3 className="text-sm font-medium text-gray-900">
+                                  {selectedDate?.toLocaleDateString('en-US', {
+                                    weekday: 'short',
+                                    month: 'short',
+                                    day: 'numeric'
+                                  })}
+                                </h3>
+                                {selectedDate && (
                                   <p className="text-xs text-gray-500">
                                     {selectedDate.getFullYear()}
                                   </p>
-                                </div>
-                                <button
-                                  onClick={() => setShowRightTab(false)}
-                                  className="p-1.5 hover:bg-white/30 rounded-full transition-colors"
-                                  title="Close details"
-                                >
-                                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                </button>
+                                )}
                               </div>
-                              {getEventsForDate(selectedDate).length > 0 ? (
-                                <div className="space-y-3">
-                                  {getEventsForDate(selectedDate).map((event) => (
-                                    <div
-                                      key={event.id}
-                                      className="p-3 bg-white/30 backdrop-blur-xl rounded-lg shadow-sm"
-                                      style={{
-                                        borderLeft: `4px solid ${
-                                          calendars.find(cal => cal.id === event.calendarId)?.color || '#000'
-                                        }`
-                                      }}
-                                    >
-                                      <div className="flex items-center justify-between">
-                                        <h4 className="font-medium text-gray-900">{event.title}</h4>
-                                        <div className="flex items-center space-x-2">
-                                          <button
-                                            onClick={() => {
-                                              setEditingEvent(event);
-                                              setShowEventModal(true);
-                                            }}
-                                            className="p-1 hover:bg-gray-100/50 backdrop-blur-sm rounded-full"
-                                            title="Edit event"
-                                          >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                            </svg>
-                                          </button>
-                                          <button
-                                            onClick={() => handleDeleteEvent(event.id)}
-                                            className="p-1 hover:bg-gray-100/50 backdrop-blur-sm rounded-full text-red-500"
-                                            title="Delete event"
-                                          >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                          </button>
-                                        </div>
+                              <button
+                                onClick={() => setShowRightTab(false)}
+                                className="p-1.5 hover:bg-white/30 rounded-full transition-colors"
+                                title="Close details"
+                              >
+                                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </div>
+                            {selectedDate && getEventsForDate(selectedDate).length > 0 ? (
+                              <div className="space-y-3">
+                                {getEventsForDate(selectedDate).map((event) => (
+                                  <div
+                                    key={event.id}
+                                    className="p-3 bg-white/30 backdrop-blur-xl rounded-lg shadow-sm"
+                                    style={{
+                                      borderLeft: `4px solid ${
+                                        calendars.find(cal => cal.id === event.calendarId)?.color || '#000'
+                                      }`
+                                    }}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <h4 className="font-medium text-gray-900">{event.title}</h4>
+                                      <div className="flex items-center space-x-2">
+                                        <button
+                                          onClick={() => {
+                                            setEditingEvent(event);
+                                            setShowEventModal(true);
+                                          }}
+                                          className="p-1 hover:bg-gray-100/50 backdrop-blur-sm rounded-full"
+                                          title="Edit event"
+                                        >
+                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                          </svg>
+                                        </button>
+                                        <button
+                                          onClick={() => handleDeleteEvent(event.id)}
+                                          className="p-1 hover:bg-gray-100/50 backdrop-blur-sm rounded-full text-red-500"
+                                          title="Delete event"
+                                        >
+                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                                          </svg>
+                                        </button>
                                       </div>
-                                      <p className="text-sm text-gray-500">
-                                        {event.start.toLocaleTimeString()} - {event.end.toLocaleTimeString()}
-                                      </p>
-                                      {event.description && (
-                                        <p className="text-sm text-gray-600 mt-1">{event.description}</p>
-                                      )}
-                                      <p className="text-xs text-gray-400 mt-1">{event.calendarName}</p>
                                     </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <p className="text-sm text-gray-600 bg-white/30 backdrop-blur-xl rounded-lg py-2 px-3">No events scheduled for this day</p>
-                              )}
-                            </motion.div>
-                          )}
+                                    <p className="text-sm text-gray-500">
+                                      {event.start.toLocaleTimeString()} - {event.end.toLocaleTimeString()}
+                                    </p>
+                                    {event.description && (
+                                      <p className="text-sm text-gray-600 mt-1">{event.description}</p>
+                                    )}
+                                    <p className="text-xs text-gray-400 mt-1">{event.calendarName}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-gray-600 bg-white/30 backdrop-blur-xl rounded-lg py-2 px-3">No events scheduled for this day</p>
+                            )}
+                          </motion.div>
                         </motion.div>
                       </AnimatePresence>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Task Section */}
+      <AnimatePresence>
+        {showCalendar && (
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 100,
+              damping: 20,
+              delay: 0.2
+            }}
+            className="p-8 mt-8"
+          >
+            <div className="backdrop-blur-2xl bg-white/20 p-6 rounded-2xl shadow-xl border border-white/50">
+              <div className="mb-8">
+                <h2 className="text-2xl font-light text-gray-900 mb-2">Your Tasks</h2>
+                <p className="text-sm text-gray-500">Manage your daily tasks and stay productive</p>
+              </div>
+              <TaskList />
             </div>
           </motion.div>
         )}
